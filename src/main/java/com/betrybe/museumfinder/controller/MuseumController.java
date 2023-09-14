@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Controller class to handle museum related operations. */
 @RestController
 @RequestMapping("/museums")
 public class MuseumController {
@@ -24,6 +25,12 @@ public class MuseumController {
     this.museumService = museumService;
   }
 
+  /**
+   * Create a museum.
+   *
+   * @param museumDto the museum to be created.
+   * @return the created museum.
+   */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public MuseumDto createMuseum(@RequestBody MuseumDto museumDto) {
