@@ -10,6 +10,7 @@ import com.betrybe.museumfinder.service.MuseumServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,18 +50,17 @@ public class MuseumController {
    *
    * @param lat the latitude of the coordinate.
    * @param lng the longitude of the coordinate.
-   * @param max_dist_km the maximum distance in kilometers.
+   * @param maxDistKm the maximum distance in kilometers.
    * @return the closest museum.
    */
   @GetMapping("/closest")
   @ResponseStatus(HttpStatus.OK)
-  public MuseumDto getClosestMuseum(@RequestParam double lat, double lng, double max_dist_km) {
+  public MuseumDto getClosestMuseum(@RequestParam double lat, double lng,
+      @RequestParam(name = "max_dist_km") double maxDistKm) {
     Coordinate coordinate = new Coordinate(lat, lng);
-    Museum museum = museumService.getClosestMuseum(coordinate, max_dist_km);
+    Museum museum = museumService.getClosestMuseum(coordinate, maxDistKm);
 
     return modelToDto(museum);
   }
-
-
 
 }
