@@ -19,7 +19,7 @@ public class CollectionTypeController {
   private final CollectionTypeService service;
 
   @Autowired
-  public CollectionTypeController(CollectionTypeService service) {
+  CollectionTypeController(CollectionTypeService service) {
     this.service = service;
   }
 
@@ -28,7 +28,7 @@ public class CollectionTypeController {
    */
   @GetMapping("/count/{typesList}")
   public ResponseEntity<CollectionTypeCount>
-      getCollectionTypesCount(@PathVariable String typesList) {
+  getCollectionTypesCount(@PathVariable String typesList) {
     CollectionTypeCount result = service.countByCollectionTypes(typesList);
 
     if (result.count() > 0) {

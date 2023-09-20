@@ -1,15 +1,17 @@
 package com.betrybe.museumfinder.solution;
 
-import com.betrybe.museumfinder.controller.CollectionTypeController;
 import com.betrybe.museumfinder.dto.CollectionTypeCount;
 import com.betrybe.museumfinder.service.CollectionTypeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,28 +19,40 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureMockMvc
 public class CollectionTypeControllerTest {
 
+  @MockBean
+  CollectionTypeService service;
+
+  @Autowired
+  MockMvc mockMvc;
+
 
   @Test
-  @DisplayName("Should return 404 when no museums are found")
-  public void testGetCollectionTypesCount() {
-    // Crie uma instância do serviço
-    CollectionTypeService service = Mockito.mock(CollectionTypeService.class);
+  @DisplayName("Should return 200 when museums are found")
+  public void testGetCollectionTypesCount() throws Exception {
 
-    // Crie uma instância do controlador injetando o serviço
-    CollectionTypeController controller = new CollectionTypeController(service);
+    Mockito.when(service.countByCollectionTypes(Mockito.any()))
+        .thenReturn(new CollectionTypeCount(new String[]{"Type1", "Type2"}, 3L));
 
-    // Defina o comportamento simulado do serviço
-    String typesList = "Type1,Type2,Type3";
-    CollectionTypeCount expectedResult = new CollectionTypeCount(new String[]{"Type1", "Type2", "Type3"}, 10);
-    Mockito.when(service.countByCollectionTypes(typesList)).thenReturn(expectedResult);
+    mockMvc.perform(MockMvcRequestBuilders.get("/collections/count/Type1,Type2"))
+        .andExpect(result -> assertEquals(HttpStatus.OK.value(), result
+            .getResponse()
+            .getStatus()))
+        .andExpect(result -> assertEquals(
+            "{\"collectionTypes\":[\"Type1\",\"Type2\"],\"count\":3}", result
+                .getResponse()
+                .getContentAsString()));
+  }
 
-    // Chame o método do controlador
-    ResponseEntity<CollectionTypeCount> responseEntity = controller.getCollectionTypesCount(typesList);
+  @Test
+  @DisplayName("Should return 404 when museums are not found")
+  public void testGetCollectionTypesCountNotFound() throws Exception {
 
-    // Verifique o status da resposta
-    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Mockito.when(service.countByCollectionTypes(Mockito.any()))
+        .thenReturn(new CollectionTypeCount(new String[]{"Type1", "Type2"}, 0L));
 
-    // Verifique se o resultado da resposta corresponde ao esperado
-    assertEquals(expectedResult, responseEntity.getBody());
+    mockMvc.perform(MockMvcRequestBuilders.get("/collections/count/Type1,Type2"))
+        .andExpect(result -> assertEquals(HttpStatus.NOT_FOUND.value(), result
+            .getResponse()
+            .getStatus()));
   }
 }
