@@ -37,7 +37,7 @@ public class GlobalControllerAdvice {
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .body(exception.getMessage());
-  }
+    }
 
   /**
    * Handle generic exceptions.

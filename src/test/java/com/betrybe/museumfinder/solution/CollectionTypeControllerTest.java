@@ -25,7 +25,6 @@ public class CollectionTypeControllerTest {
   @Autowired
   MockMvc mockMvc;
 
-
   @Test
   @DisplayName("Should return 200 when museums are found")
   public void testGetCollectionTypesCount() throws Exception {
